@@ -58,16 +58,69 @@ function AnimatedItems({ items, isOpen }) {
   )
 }
 
+function NewsTicker({ message }) {
+  const tickerText = message || "Loading..."
+  
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a] border-t border-[#222] py-2 overflow-hidden z-50">
+      <div className="ticker-wrap">
+        <div className="ticker">
+          <span className="ticker-item text-sm text-[#666]">
+            {tickerText}&nbsp;&nbsp;&nbsp;&nbsp;////&nbsp;&nbsp;&nbsp;&nbsp;{tickerText}&nbsp;&nbsp;&nbsp;&nbsp;////&nbsp;&nbsp;&nbsp;&nbsp;{tickerText}&nbsp;&nbsp;&nbsp;&nbsp;////&nbsp;&nbsp;&nbsp;&nbsp;
+          </span>
+        </div>
+      </div>
+      <style jsx>{`
+        .ticker-wrap {
+          width: 100%;
+          overflow: hidden;
+        }
+        .ticker {
+          display: inline-block;
+          white-space: nowrap;
+          animation: ticker 25s linear infinite;
+        }
+        .ticker-item {
+          display: inline-block;
+        }
+        @keyframes ticker {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-33.33%);
+          }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export default function Home() {
   const [projectsOpen, setProjectsOpen] = useState(false)
   const [digitalArtOpen, setDigitalArtOpen] = useState(false)
   const [loadingStage, setLoadingStage] = useState(0)
+  const [tickerMessage, setTickerMessage] = useState('')
 
   useEffect(() => {
     const stages = [500, 1500, 2500, 3500, 4500]
     stages.forEach((time, index) => {
       setTimeout(() => setLoadingStage(index + 1), time)
     })
+
+    // Fetch random ticker message
+    fetch('/ticker-messages.csv')
+      .then(res => res.text())
+      .then(data => {
+        const lines = data.split('\n').filter(line => line.trim())
+        // Skip header row, get random message
+        const messages = lines.slice(1)
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)]
+        setTickerMessage(randomMessage)
+      })
+      .catch(() => {
+        setTickerMessage('Welcome to my portfolio.')
+      })
   }, [])
 
   const digitalArtItems = [
@@ -101,7 +154,7 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono">
+    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono pb-12">
       {/* Fixed position name - never moves */}
       <div className="fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 px-8 pt-8 md:pt-[20vh] pb-6">
         <div className="max-w-[700px] mx-auto w-full">
@@ -207,6 +260,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* News Ticker */}
+      <NewsTicker message={tickerMessage} />
     </main>
   )
 }
