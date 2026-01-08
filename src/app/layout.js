@@ -1,7 +1,7 @@
 export const metadata = {
   title: "Dave Krugman | Photographer & Digital Artist",
   description: "Dave Krugman is a New York City based photographer, writer, and founder of ALLSHIPS. Creating work at the intersection of technology and art.",
-  keywords: ["Dave Krugman", "photographer", "digital art", "NFT", "New York", "ALLSHIPS"],
+  keywords: ["Dave Krugman", "photographer", "nyc", "instagram", "digital art", "NFT", "New York", "ALLSHIPS"],
   authors: [{ name: "Dave Krugman" }],
   creator: "Dave Krugman",
   openGraph: {
