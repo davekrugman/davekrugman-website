@@ -101,9 +101,9 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono flex flex-col md:justify-center">
-      {/* Header with name - sticky on mobile, part of centered flow on desktop */}
-      <header className="sticky md:static top-0 bg-[#0a0a0a] z-50 px-8 pt-8 md:pt-0 pb-6">
+    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono">
+      {/* Fixed position name - never moves */}
+      <div className="fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 px-8 pt-8 md:pt-[20vh] pb-6">
         <div className="max-w-[700px] mx-auto w-full">
           <h1 className="text-2xl font-normal text-white">
             {loadingStage >= 1 && (
@@ -115,7 +115,10 @@ export default function Home() {
             )}
           </h1>
         </div>
-      </header>
+      </div>
+
+      {/* Spacer to push content below fixed header */}
+      <div className="h-[80px] md:h-[calc(20vh+60px)]"></div>
 
       {/* Content */}
       <div className="px-8 pb-12">
