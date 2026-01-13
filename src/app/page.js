@@ -171,7 +171,7 @@ export default function Home() {
       </div>
 
       {/* Spacer to push content below fixed header */}
-      <div className="h-[60px] md:h-[calc(20vh+60px)]"></div>
+      <div className="h-[90px] md:h-[calc(20vh+60px)]"></div>
 
       {/* Content */}
       <div className="px-6 md:px-8 pb-12">
