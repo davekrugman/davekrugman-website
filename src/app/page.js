@@ -154,11 +154,11 @@ export default function Home() {
   ]
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono pb-12">
+    <main className="min-h-screen bg-[#0a0a0a] text-[#e0e0e0] font-mono pb-16">
       {/* Fixed position name - never moves */}
-      <div className="fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 px-8 pt-8 md:pt-[20vh] pb-6">
+      <div className="fixed top-0 left-0 right-0 bg-[#0a0a0a] z-50 px-6 pt-6 md:px-8 md:pt-[20vh] pb-4 md:pb-6">
         <div className="max-w-[700px] mx-auto w-full">
-          <h1 className="text-2xl font-normal text-white">
+          <h1 className="text-xl md:text-2xl font-normal text-white">
             {loadingStage >= 1 && (
               loadingStage === 1 ? (
                 <TypeWriter text="DAVE KRUGMAN" delay={50} />
@@ -171,13 +171,13 @@ export default function Home() {
       </div>
 
       {/* Spacer to push content below fixed header */}
-      <div className="h-[80px] md:h-[calc(20vh+60px)]"></div>
+      <div className="h-[60px] md:h-[calc(20vh+60px)]"></div>
 
       {/* Content */}
-      <div className="px-8 pb-12">
+      <div className="px-6 md:px-8 pb-12">
         <div className="max-w-[700px] mx-auto w-full">
           {/* Bio */}
-          <div className={`mb-8 font-light text-[15px] leading-relaxed transition-opacity duration-500 ${loadingStage >= 2 ? 'opacity-100' : 'opacity-0'}`}>
+          <div className={`mb-8 font-light text-sm md:text-[15px] leading-relaxed transition-opacity duration-500 ${loadingStage >= 2 ? 'opacity-100' : 'opacity-0'}`}>
             <p className="mb-4">
               Photographer, writer, and founder of{' '}
               <a 
@@ -243,7 +243,7 @@ export default function Home() {
           {/* Connect section */}
           <div className={`transition-opacity duration-500 ${loadingStage >= 4 ? 'opacity-100' : 'opacity-0'}`}>
             <div className="text-xs text-[#666] uppercase tracking-wider mb-3">// connect</div>
-            <nav className="flex flex-wrap gap-6">
+            <nav className="flex flex-wrap gap-4 md:gap-6">
               <a href="https://instagram.com/dave.krugman" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-[#e0e0e0] hover:text-white">
                 <span className="text-[#666]">&gt;&gt;&gt;</span> instagram
               </a>
