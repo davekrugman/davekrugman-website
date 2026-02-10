@@ -1,0 +1,37 @@
+.cryptoStatsBar {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 3rem;
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.cryptoStat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cryptoStatValue {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.cryptoStatLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+@media (max-width: 968px) {
+  .cryptoStatsBar {
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+}

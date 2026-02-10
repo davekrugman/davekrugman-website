@@ -1,0 +1,150 @@
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 1.25rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 10, 12, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.4s var(--transition);
+}
+
+.navLogo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.navLogo:hover {
+  text-shadow: none;
+}
+
+.accent {
+  color: var(--accent);
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  align-items: center;
+}
+
+.navLink {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  position: relative;
+  padding: 0.25rem 0;
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.4s var(--transition);
+}
+
+.navLink:hover {
+  color: var(--text);
+  text-shadow: none;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.navLinkActive {
+  color: var(--text);
+}
+
+.navLinkActive::after {
+  width: 100%;
+}
+
+.modeToggle {
+  display: flex;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.modeBtn {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s var(--transition);
+}
+
+.modeBtnActive {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.modeBtn:hover:not(.modeBtnActive) {
+  color: var(--text);
+}
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.hamburgerLine {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--text);
+  transition: all 0.3s var(--transition);
+}
+
+@media (max-width: 968px) {
+  .nav {
+    padding: 1rem 1.5rem;
+  }
+
+  .navLinks {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .navLinksOpen {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: rgba(10,10,12,0.95);
+    backdrop-filter: blur(20px);
+    padding: 2rem;
+    border-bottom: 1px solid var(--border);
+    gap: 1.5rem;
+  }
+}

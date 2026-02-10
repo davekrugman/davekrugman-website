@@ -1,0 +1,25 @@
+.digitalArt {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.intro {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 600px;
+  margin-bottom: 4rem;
+}
+
+.collectionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 968px) {
+  .collectionsGrid {
+    grid-template-columns: 1fr;
+  }
+}

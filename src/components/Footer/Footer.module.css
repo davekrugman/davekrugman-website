@@ -1,0 +1,71 @@
+.footer {
+  padding: 3rem 6vw;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.footerName {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.footerCopy {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.footerSocials {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footerSocials a {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.footerSocials a:hover {
+  color: var(--accent);
+  text-shadow: none;
+}
+
+.footerAllships {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.footerAllships a {
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1px;
+}
+
+.footerAllships a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  text-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

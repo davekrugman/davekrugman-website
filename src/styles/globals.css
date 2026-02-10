@@ -1,0 +1,137 @@
+:root {
+  --bg: #0a0a0c;
+  --bg-elevated: #111114;
+  --bg-card: #16161a;
+  --border: #2a2a30;
+  --border-bright: #3a3a42;
+  --text: #e8e6e3;
+  --text-dim: #7a7880;
+  --text-muted: #4a4850;
+  --accent: #00ff41;
+  --accent-dim: rgba(0, 255, 65, 0.15);
+  --accent-glow: rgba(0, 255, 65, 0.08);
+  --warm: #ff6b35;
+  --cool: #00d4ff;
+  --mono: var(--font-mono), var(--font-jetbrains), monospace;
+  --sans: var(--font-sans), sans-serif;
+  --transition: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-bright) var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-weight: 400;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Noise texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Disable CRT overlays on gallery pages */
+body.no-crt::before,
+body.no-crt::after {
+  display: none;
+}
+
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: all 0.3s var(--transition);
+}
+a:hover {
+  text-shadow: 0 0 12px var(--accent-dim);
+}
+
+/* ======================== SECTION SHARED ======================== */
+section {
+  padding: 8rem 6vw;
+  position: relative;
+  z-index: 2;
+}
+
+/* ======================== ANIMATIONS ======================== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s var(--transition), transform 0.8s var(--transition);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  z-index: 2;
+}
+
+/* Placeholder images with gradients */
+.ph-1 { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+.ph-2 { background: linear-gradient(135deg, #2d1b2e, #1a1a2e, #16213e); }
+.ph-3 { background: linear-gradient(135deg, #0f3460, #1a1a2e, #2d1b2e); }
+.ph-4 { background: linear-gradient(135deg, #16213e, #0f3460, #1a1a2e); }
+.ph-5 { background: linear-gradient(135deg, #1a1a2e, #2d1b2e, #0f3460); }
+.ph-6 { background: linear-gradient(135deg, #0f3460, #2d1b2e, #1a1a2e); }
+.ph-7 { background: linear-gradient(135deg, #2d1b2e, #0f3460, #16213e); }
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 968px) {
+  section { padding: 5rem 5vw; }
+}

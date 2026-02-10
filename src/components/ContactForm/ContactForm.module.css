@@ -1,0 +1,151 @@
+.contactLayout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.contactInfo h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.contactInfo p {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 2rem;
+}
+
+.contactDetail {
+  margin-bottom: 1.5rem;
+}
+
+.contactDetailLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+.contactDetailValue {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.contactDetailValue a {
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+}
+
+.contactDetailValue a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  text-shadow: none;
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  position: relative;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.formGroup input,
+.formGroup textarea,
+.formGroup select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  padding: 0.85rem 1rem;
+  transition: all 0.3s var(--transition);
+  outline: none;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus,
+.formGroup select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-glow);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.formGroup select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237a7880'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+.formGroup select option {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.submitBtn {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.85rem 2.5rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s var(--transition);
+}
+
+.submitBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-101%);
+  transition: transform 0.4s var(--transition);
+}
+
+.submitBtn:hover {
+  color: var(--bg);
+}
+
+.submitBtn:hover::before {
+  transform: translateX(0);
+}
+
+.submitBtnText {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 968px) {
+  .contactLayout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+}

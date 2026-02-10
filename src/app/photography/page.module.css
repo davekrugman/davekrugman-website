@@ -1,0 +1,98 @@
+.projectGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.projectCard {
+  display: block;
+  position: relative;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.projectImageWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s var(--transition), filter 0.5s var(--transition);
+  filter: grayscale(15%) contrast(1.05);
+}
+
+.projectCard:hover .projectImageWrap {
+  transform: scale(1.05);
+  filter: grayscale(0%) contrast(1.1);
+}
+
+.projectOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 12, 0.85) 0%,
+    rgba(10, 10, 12, 0.2) 40%,
+    transparent 60%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  z-index: 1;
+  transition: background 0.4s var(--transition);
+}
+
+.projectCard:hover .projectOverlay {
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 12, 0.9) 0%,
+    rgba(10, 10, 12, 0.3) 50%,
+    transparent 70%
+  );
+}
+
+.projectTitle {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 0.3rem;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+.projectCount {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color 0.3s var(--transition);
+}
+
+.projectCard:hover .projectCount {
+  color: var(--accent);
+}
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 968px) {
+  .projectGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .projectGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .projectCard {
+    aspect-ratio: 16/10;
+  }
+
+  .projectOverlay {
+    padding: 1.2rem;
+  }
+}

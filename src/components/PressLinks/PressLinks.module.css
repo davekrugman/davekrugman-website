@@ -1,0 +1,61 @@
+.pressSection {
+  margin-top: 2rem;
+}
+
+.pressLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.pressList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pressTag {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  transition: all 0.3s var(--transition);
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.pressTag:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent-dim);
+}
+
+.showAllBtn {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s var(--transition);
+  margin-top: 0.5rem;
+}
+
+.showAllBtn:hover {
+  border-color: var(--border-bright);
+  color: var(--text);
+}
+
+@media (max-width: 600px) {
+  .pressList {
+    gap: 0.3rem;
+  }
+}

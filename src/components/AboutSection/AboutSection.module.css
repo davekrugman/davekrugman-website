@@ -1,0 +1,104 @@
+.aboutLayout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.aboutImageBlock {
+  position: relative;
+}
+
+.aboutImage {
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.aboutImage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border);
+}
+
+.aboutContent h3 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+}
+
+.aboutText {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
+}
+
+.connectSection {
+  margin: 2.5rem 0;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.connectLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.connectSocials {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  transition: all 0.3s var(--transition);
+  text-decoration: none;
+}
+
+.socialLink svg {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.socialLink:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 16px var(--accent-dim);
+  text-shadow: none;
+}
+
+@media (max-width: 968px) {
+  .aboutLayout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .aboutImageBlock {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 600px) {
+  .connectSocials {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,135 @@
+.photoCategories {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.photoCatBtn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s var(--transition);
+}
+
+.photoCatBtn:hover,
+.photoCatBtnActive {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.photoItem {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--bg-elevated);
+}
+
+.photoItemWide {
+  grid-column: span 2;
+  aspect-ratio: 2/1;
+}
+
+.photoItemTall {
+  grid-row: span 2;
+  aspect-ratio: auto;
+}
+
+.photoItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--transition), filter 0.5s var(--transition);
+  filter: grayscale(15%) contrast(1.05);
+}
+
+.photoItem:hover img {
+  transform: scale(1.05);
+  filter: grayscale(0%) contrast(1.1);
+}
+
+.photoPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoPlaceholderText {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.photoOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,10,12,0.9) 0%, transparent 50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.4s var(--transition);
+}
+
+.photoItem:hover .photoOverlay {
+  opacity: 1;
+}
+
+.photoOverlayTitle {
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.photoOverlayMeta {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 968px) {
+  .photoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .photoItemWide {
+    grid-column: span 2;
+  }
+
+  .photoItemTall {
+    grid-row: span 1;
+    aspect-ratio: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .photoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .photoItemWide {
+    grid-column: span 1;
+    aspect-ratio: 4/3;
+  }
+}
