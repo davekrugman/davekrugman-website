@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactCompiler: true,
+  outputFileTracingExcludes: {
+    '/photography/[slug]': ['./public/images/photography/**'],
+    '/photography': ['./public/images/photography/**'],
+  },
 };
 
 export default nextConfig;
