@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const ALLOWED_HOSTS = [
   'cdninstagram.com',
   'instagram.com',
+  'fbcdn.net',
   'twimg.com',
   'pbs.twimg.com',
 ];
