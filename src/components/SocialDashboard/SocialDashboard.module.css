@@ -1,0 +1,335 @@
+/* ======================== DASHBOARD LAYOUT ======================== */
+.dashboard {
+  width: 100%;
+}
+
+.dashboardStatus {
+  margin-bottom: 1.5rem;
+}
+
+.statusLabel {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 968px) {
+  .dashboardGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .dashboardGrid > *:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .dashboardGrid > *:last-child {
+    grid-column: auto;
+  }
+}
+
+/* ======================== BOOT LOADER ======================== */
+.loader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem 0;
+}
+
+.bootLine {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  opacity: 0;
+  animation: bootFadeIn 0.3s ease-out forwards;
+}
+
+.loaderCursor {
+  color: var(--accent);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes bootFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ======================== ERROR STATE ======================== */
+.errorState {
+  padding: 1rem 0;
+}
+
+.errorLine {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--warm);
+  margin-bottom: 0.3rem;
+}
+
+.errorRetry {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+/* ======================== SHARED POST STYLES ======================== */
+.feedList {
+  display: flex;
+  flex-direction: column;
+}
+
+.postItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s var(--transition), background 0.25s var(--transition);
+  position: relative;
+}
+
+.postItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.25s var(--transition);
+}
+
+.postItem:last-child {
+  border-bottom: none;
+}
+
+.postItem:hover {
+  transform: translateX(0.5rem);
+  background: var(--accent-glow);
+}
+
+.postItem:hover::before {
+  opacity: 1;
+}
+
+.postPrefix {
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  line-height: 1.6;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.postContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.postText {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.postTitle {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 0.2rem;
+}
+
+.postDescription {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0.2rem;
+}
+
+.postDate {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+/* ======================== IMAGE POST (side-by-side) ======================== */
+.postItemWithImage {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s var(--transition), background 0.25s var(--transition);
+  position: relative;
+}
+
+.postItemWithImage::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.25s var(--transition);
+}
+
+.postItemWithImage:last-child {
+  border-bottom: none;
+}
+
+.postItemWithImage:hover {
+  transform: translateX(0.5rem);
+  background: var(--accent-glow);
+}
+
+.postItemWithImage:hover::before {
+  opacity: 1;
+}
+
+.postImageLeft {
+  flex-shrink: 0;
+  width: 40%;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.postImageLeft img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Text side: height is driven by the image via align-items:stretch.
+   position:relative + absolute inner wrapper clips text to that height. */
+.postTextRight {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.postTextRightInner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.postTextRightInner .postText {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: unset !important;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  /* fade-out mask at the bottom when text overflows */
+  -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1.2rem), transparent 100%);
+  mask-image: linear-gradient(to bottom, black calc(100% - 1.2rem), transparent 100%);
+}
+
+/* ======================== INSTAGRAM GRID ======================== */
+.instaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px;
+}
+
+.instaThumb {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  background: var(--bg-elevated);
+}
+
+.instaImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s var(--transition);
+}
+
+.instaThumb:hover .instaImg {
+  transform: scale(1.05);
+}
+
+.instaPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--bg-elevated), var(--bg-card));
+}
+
+.instaOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.4rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  opacity: 0;
+  transition: opacity 0.25s var(--transition);
+}
+
+.instaThumb:hover .instaOverlay {
+  opacity: 1;
+}
+
+.instaCaption {
+  font-family: var(--mono);
+  font-size: 0.5rem;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}

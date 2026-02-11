@@ -1,0 +1,10 @@
+.dashboardPage {
+  padding: 8rem 6vw;
+  min-height: 100vh;
+}
+
+@media (max-width: 968px) {
+  .dashboardPage {
+    padding: 5rem 5vw;
+  }
+}
