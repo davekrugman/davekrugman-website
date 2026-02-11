@@ -26,8 +26,28 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.davekrugman.com'),
   title: 'Dave Krugman | Photographer & Digital Artist',
   description: 'Photographer, writer, and digital artist. Creating work at the intersection of technology and art.',
+  openGraph: {
+    type: 'website',
+    siteName: 'Dave Krugman',
+    title: 'Dave Krugman | Photographer & Digital Artist',
+    description: 'Photographer, writer, and digital artist. Creating work at the intersection of technology and art.',
+    images: [
+      {
+        url: '/og/headshot.jpg',
+        width: 1200,
+        height: 800,
+        alt: 'Dave Krugman',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    creator: '@davekrugman',
+    images: ['/og/headshot.jpg'],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
