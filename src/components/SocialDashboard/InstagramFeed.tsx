@@ -1,4 +1,5 @@
 import type { SocialPost } from '@/types/social';
+import { formatRelativeDate } from './utils';
 import styles from './SocialDashboard.module.css';
 
 function proxyUrl(url: string): string {
@@ -10,51 +11,48 @@ interface InstagramFeedProps {
 }
 
 export default function InstagramFeed({ posts }: InstagramFeedProps) {
-  const hasImages = posts.some((p) => p.imageUrl);
-
-  if (hasImages) {
-    return (
-      <div className={styles.instaGrid}>
-        {posts.map((post) => (
+  return (
+    <div className={styles.feedList}>
+      {posts.map((post) =>
+        post.imageUrl ? (
           <a
             key={post.url}
             href={post.url}
             target="_blank"
             rel="noopener noreferrer"
-            className={styles.instaThumb}
+            className={styles.postItemWithImage}
           >
-            {post.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={proxyUrl(post.imageUrl)} alt={post.text || 'Instagram post'} className={styles.instaImg} />
-            ) : (
-              <div className={styles.instaPlaceholder} />
-            )}
-            <div className={styles.instaOverlay}>
-              <span className={styles.instaCaption}>{post.text}</span>
+            <div className={styles.postImageLeft}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={proxyUrl(post.imageUrl)} alt="" />
+            </div>
+            <div className={styles.postTextRight}>
+              <div className={styles.postTextRightInner}>
+                <div className={styles.postText}>{post.text}</div>
+                {post.date && (
+                  <div className={styles.postDate}>{formatRelativeDate(post.date)}</div>
+                )}
+              </div>
             </div>
           </a>
-        ))}
-      </div>
-    );
-  }
-
-  // Text fallback if no images
-  return (
-    <div className={styles.feedList}>
-      {posts.map((post) => (
-        <a
-          key={post.url}
-          href={post.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.postItem}
-        >
-          <span className={styles.postPrefix}>#</span>
-          <div className={styles.postContent}>
-            <div className={styles.postText}>{post.text}</div>
-          </div>
-        </a>
-      ))}
+        ) : (
+          <a
+            key={post.url}
+            href={post.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.postItem}
+          >
+            <span className={styles.postPrefix}>#</span>
+            <div className={styles.postContent}>
+              <div className={styles.postText}>{post.text}</div>
+              {post.date && (
+                <div className={styles.postDate}>{formatRelativeDate(post.date)}</div>
+              )}
+            </div>
+          </a>
+        )
+      )}
     </div>
   );
 }
