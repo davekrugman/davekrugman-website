@@ -1,8 +1,7 @@
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import SectionHeader from '@/components/SectionHeader/SectionHeader';
 import CryptoStatsBar from '@/components/CryptoStatsBar/CryptoStatsBar';
-import CollectionCard from '@/components/CollectionCard/CollectionCard';
-import { collections } from '@/data/collections';
+import CollectionsGrid from '@/components/CollectionsGrid/CollectionsGrid';
 import styles from './DigitalArtSection.module.css';
 
 export default function DigitalArtSection() {
@@ -20,11 +19,7 @@ export default function DigitalArtSection() {
         <CryptoStatsBar />
       </ScrollReveal>
       <ScrollReveal>
-        <div className={styles.collectionsGrid}>
-          {collections.map((collection) => (
-            <CollectionCard key={collection.id} collection={collection} />
-          ))}
-        </div>
+        <CollectionsGrid />
       </ScrollReveal>
     </section>
   );

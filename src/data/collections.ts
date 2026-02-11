@@ -17,6 +17,8 @@ export interface Collection {
   imageAlt: string;
   stats: CollectionStat[];
   links: CollectionLink[];
+  openseaSlug?: string;
+  primaryBaseline?: number;
 }
 
 export const collections: Collection[] = [
@@ -27,6 +29,8 @@ export const collections: Collection[] = [
     description: 'A cohesive collection of 1,111 1/1 photography NFTs \u2014 an ode to generative art, inspired by Art Blocks. A study of the generative beauty of the universe, viewed through the lens of rain hitting puddles in Times Square.',
     image: '/images/collections/drip-drop-thumb.jpg',
     imageAlt: 'DRIP DROP collection preview',
+    openseaSlug: 'drip-drop-by-dave-krugman',
+    primaryBaseline: 173.20,
     stats: [
       { value: '0.0699', label: 'Floor (ETH)' },
       { value: '384.91', label: 'Vol (ETH)' },
@@ -44,6 +48,7 @@ export const collections: Collection[] = [
     description: '111 unique vehicles aggregated over a decade of street photography. More than a collection \u2014 an ecosystem of access, a dynamic community game, and an entry ticket to future endeavors.',
     image: '/images/collections/drive-lap1-thumb.jpg',
     imageAlt: 'DRIVE // LAP 1 collection preview',
+    openseaSlug: 'drive-dave-krugman',
     stats: [
       { value: '0.25', label: 'Floor (ETH)' },
       { value: '197.90', label: 'Vol (ETH)' },
@@ -60,6 +65,8 @@ export const collections: Collection[] = [
     description: 'The second season of DRIVE \u2014 an exercise in world building on the blockchain. Featuring a full commercial, billboards, merch, and the spirit of a used car business brought to life on-chain.',
     image: '/images/collections/drive-lap2-thumb.jpg',
     imageAlt: 'DRIVE // LAP 2 collection preview',
+    openseaSlug: 'drive-lap-2',
+    primaryBaseline: 28.00,
     stats: [
       { value: '0.0684', label: 'Floor (ETH)' },
       { value: '1.31', label: 'Vol (ETH)' },
@@ -76,6 +83,8 @@ export const collections: Collection[] = [
     description: 'Nocturnal explorations of the city \u2014 where darkness reveals a different kind of light. A study in urban nightscapes and the energy that emerges after sundown.',
     image: '/images/collections/NIGHTMOVES_SELECTS_BLACK.jpg',
     imageAlt: 'NIGHTMOVES collection preview',
+    openseaSlug: 'nightmoves',
+    primaryBaseline: 5.63,
     stats: [
       { value: '10', label: 'Works' },
       { value: '9', label: 'Owners' },
@@ -93,6 +102,7 @@ export const collections: Collection[] = [
     description: 'A curated selection of editioned photography \u2014 accessible entry points into the broader ecosystem of on-chain work.',
     image: '/images/collections/editioned-work-thumb.jpg',
     imageAlt: 'EDITIONED WORK collection preview',
+    openseaSlug: 'dave-krugman-editions',
     stats: [
       { value: '0.127', label: 'Floor (ETH)' },
       { value: '6.16', label: 'Vol (ETH)' },
@@ -109,6 +119,8 @@ export const collections: Collection[] = [
     description: 'Exploring parallels between film photography and blockchain \u2014 both act as time chains with proof of work mechanisms. Tokens are sold before capture, then \u201Cdevelop\u201D with high-res Mamiya 7ii film scans.',
     image: '/images/collections/rolls-thumb.jpg',
     imageAlt: 'ROLLS collection preview',
+    openseaSlug: 'rolls-dave-krugman',
+    primaryBaseline: 38.59,
     stats: [
       { value: '10', label: 'Works' },
       { value: '10', label: 'Owners' },

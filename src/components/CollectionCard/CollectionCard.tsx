@@ -2,11 +2,56 @@ import Image from 'next/image';
 import type { Collection } from '@/data/collections';
 import styles from './CollectionCard.module.css';
 
-interface CollectionCardProps {
-  collection: Collection;
+interface LiveStats {
+  floor: number;
+  volume: number;
+  owners: number;
 }
 
-export default function CollectionCard({ collection }: CollectionCardProps) {
+interface CollectionCardProps {
+  collection: Collection;
+  liveStats?: LiveStats;
+}
+
+function formatStat(value: number, decimals: number = 2): string {
+  if (value === 0) return '—';
+  if (value >= 1000) return value.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  if (value >= 100) return value.toFixed(1);
+  if (value >= 1) return value.toFixed(decimals);
+  return value.toPrecision(3);
+}
+
+function buildStats(collection: Collection, live?: LiveStats) {
+  if (!live || !collection.openseaSlug) return collection.stats;
+
+  const stats = [];
+
+  if (live.floor > 0) {
+    stats.push({ value: formatStat(live.floor, 4), label: 'Floor (ETH)' });
+  }
+
+  if (live.volume > 0) {
+    stats.push({ value: formatStat(live.volume), label: 'Vol (ETH)' });
+  }
+
+  if (live.owners > 0) {
+    stats.push({ value: live.owners.toLocaleString(), label: 'Owners' });
+  }
+
+  // Keep any static-only stats like "Platform", "Works", "Unique"
+  for (const stat of collection.stats) {
+    const isLiveLabel = ['Floor (ETH)', 'Vol (ETH)', 'Owners'].includes(stat.label);
+    if (!isLiveLabel) {
+      stats.push(stat);
+    }
+  }
+
+  return stats.length > 0 ? stats : collection.stats;
+}
+
+export default function CollectionCard({ collection, liveStats }: CollectionCardProps) {
+  const stats = buildStats(collection, liveStats);
+
   return (
     <div className={styles.collectionCard}>
       <a
@@ -28,7 +73,7 @@ export default function CollectionCard({ collection }: CollectionCardProps) {
         <div className={styles.collectionName}>{collection.name}</div>
         <div className={styles.collectionDesc}>{collection.description}</div>
         <div className={styles.collectionStats}>
-          {collection.stats.map((stat, i) => (
+          {stats.map((stat, i) => (
             <div key={i} className={styles.stat}>
               <div className={styles.statValue}>{stat.value}</div>
               <div className={styles.statLabel}>{stat.label}</div>
