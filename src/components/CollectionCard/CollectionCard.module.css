@@ -83,7 +83,8 @@
 
 .collectionStats {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border);
 }
