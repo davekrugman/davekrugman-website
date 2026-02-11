@@ -94,6 +94,20 @@
   gap: 0.2rem;
 }
 
+.statLink {
+  text-decoration: none;
+  transition: all 0.3s var(--transition);
+  cursor: pointer;
+}
+
+.statLink:hover .statValue {
+  color: var(--accent);
+}
+
+.statLink:hover .statLabel {
+  color: var(--accent);
+}
+
 .statValue {
   font-weight: 600;
   font-size: 0.85rem;
