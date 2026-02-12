@@ -9,7 +9,7 @@ const PI_DIGITS =
 
 const CHAR_SIZE = 13;
 const COL_SPACING = 20;
-const SPHERE_RADIUS = 80;
+const SPHERE_RADIUS = 30;
 
 interface CharParticle {
   baseX: number;      // column x position
@@ -129,11 +129,11 @@ export default function MatrixRain() {
         for (const p of col.particles) {
           // --- Sphere collision physics ---
           // Return to column x position (spring back)
-          const returnForce = (p.baseX - p.x) * 0.08;
+          const returnForce = (p.baseX - p.x) * 0.06;
           p.vx += returnForce;
 
-          // Reset vy toward base speed
-          p.vy += (p.baseSpeed - p.vy) * 0.05;
+          // Gravity — always pull vy back toward base fall speed
+          p.vy += (p.baseSpeed - p.vy) * 0.08;
 
           if (mouse) {
             const dx = p.x - mouse.x;
@@ -141,32 +141,27 @@ export default function MatrixRain() {
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < SPHERE_RADIUS && dist > 0) {
-              // Sphere surface normal
+              // Hard push to sphere surface — tight contact
               const nx = dx / dist;
               const ny = dy / dist;
-
-              // Push character to the sphere surface
               const overlap = SPHERE_RADIUS - dist;
-              p.x += nx * overlap * 0.3;
-              p.y += ny * overlap * 0.15;
+              p.x += nx * overlap * 0.7;
+              p.y += ny * overlap * 0.5;
 
-              // Deflect velocity — rain flows around the sphere
-              // Project velocity onto the tangent of the sphere
+              // Deflect velocity along sphere tangent
               const dot = p.vx * nx + p.vy * ny;
               if (dot < 0) {
-                // Only deflect if moving toward sphere
-                p.vx -= dot * nx * 1.5;
-                p.vy -= dot * ny * 0.8;
+                p.vx -= dot * nx * 1.8;
+                p.vy -= dot * ny * 1.2;
               }
 
-              // Add tangential flow — characters slide around the sphere
-              const tx = -ny; // tangent direction
-              p.vx += tx * Math.sign(dx) * 0.8;
+              // Slide around — tangential push
+              p.vx += -ny * Math.sign(dx) * 1.2;
             }
           }
 
-          // Damping on horizontal movement
-          p.vx *= 0.92;
+          // Damping on horizontal — lets characters drift back to column
+          p.vx *= 0.88;
 
           // Apply velocity
           p.x += p.vx;
