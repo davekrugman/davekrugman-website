@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import TweetTicker from '@/components/TweetTicker/TweetTicker';
+import ParticleGrid from '@/components/ParticleGrid/ParticleGrid';
 import styles from './Hero.module.css';
 
 export default function Hero() {
@@ -29,6 +30,7 @@ export default function Hero() {
       <div className={styles.heroBgGrid}></div>
       <div ref={glow1Ref} className={`${styles.heroGlow} ${styles.heroGlow1}`}></div>
       <div ref={glow2Ref} className={`${styles.heroGlow} ${styles.heroGlow2}`}></div>
+      <ParticleGrid />
 
       <div className={styles.heroLabel}>
         {'// new york city '}<span className={styles.blink}>_</span>
