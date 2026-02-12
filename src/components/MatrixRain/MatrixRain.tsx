@@ -14,15 +14,65 @@ const MAX_SPLASHES = 80;
 const COLLISION_RADIUS = 18;
 const COLLISION_RADIUS_SQ = COLLISION_RADIUS * COLLISION_RADIUS;
 
-// Pre-compute opacity strings to avoid string allocation every frame
+// Atlas constants
+const ATLAS_LEVELS = 21; // opacity levels: 0.00, 0.05, ..., 1.00
+const ATLAS_CHARS = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+const ATLAS_CHAR_COUNT = ATLAS_CHARS.length; // 95 printable ASCII
+
+// Pre-compute character index lookup (charCode -> atlas column)
+const CHAR_TO_ATLAS: number[] = new Array(128).fill(0);
+for (let i = 0; i < ATLAS_CHAR_COUNT; i++) {
+  CHAR_TO_ATLAS[ATLAS_CHARS.charCodeAt(i)] = i;
+}
+
+// Pre-compute PI_DIGITS -> atlas column indices for fast lookup
+const PI_ATLAS_INDEX: number[] = new Array(PI_LEN);
+for (let i = 0; i < PI_LEN; i++) {
+  PI_ATLAS_INDEX[i] = CHAR_TO_ATLAS[PI_DIGITS.charCodeAt(i)];
+}
+
+// Pre-compute opacity strings for splash particles (which still use fillRect)
 const OPACITY_CACHE: string[] = [];
 for (let i = 0; i <= 100; i++) {
   OPACITY_CACHE[i] = `rgba(0,255,65,${(i / 100).toFixed(2)})`;
 }
 
 function getOpacityColor(opacity: number): string {
-  const idx = (opacity * 100) | 0; // fast floor
+  const idx = (opacity * 100) | 0;
   return OPACITY_CACHE[idx < 0 ? 0 : idx > 100 ? 100 : idx];
+}
+
+interface Atlas {
+  canvas: HTMLCanvasElement;
+  cellW: number;
+  cellH: number;
+}
+
+function buildAtlas(dpr: number): Atlas {
+  const cellW = Math.ceil(CHAR_SIZE * 1.2);
+  const cellH = Math.ceil(CHAR_SIZE * 1.4);
+
+  const atlasCanvas = document.createElement('canvas');
+  atlasCanvas.width = ATLAS_CHAR_COUNT * cellW * dpr;
+  atlasCanvas.height = ATLAS_LEVELS * cellH * dpr;
+
+  const actx = atlasCanvas.getContext('2d')!;
+  actx.scale(dpr, dpr);
+  actx.font = `${CHAR_SIZE}px 'IBM Plex Mono', monospace`;
+  actx.textAlign = 'center';
+  actx.textBaseline = 'middle';
+
+  for (let li = 0; li < ATLAS_LEVELS; li++) {
+    const opacity = li / (ATLAS_LEVELS - 1);
+    actx.fillStyle = `rgba(0,255,65,${opacity.toFixed(2)})`;
+    for (let ci = 0; ci < ATLAS_CHAR_COUNT; ci++) {
+      const x = ci * cellW + cellW / 2;
+      const y = li * cellH + cellH / 2;
+      actx.fillText(ATLAS_CHARS[ci], x, y);
+    }
+  }
+
+  return { canvas: atlasCanvas, cellW, cellH };
 }
 
 interface CharParticle {
@@ -76,7 +126,8 @@ export default function MatrixRain() {
 
     let w = 0;
     let h = 0;
-    let needsFontReset = true;
+    let currentDpr = 1;
+    let atlas: Atlas | null = null;
 
     // Cache canvas rect for mousemove (avoid getBoundingClientRect every move)
     let canvasRect = { left: 0, top: 0 };
@@ -84,14 +135,20 @@ export default function MatrixRain() {
     function resize() {
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       w = rect.width;
       h = rect.height;
       canvas.width = w * dpr;
       canvas.height = h * dpr;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       canvasRect = { left: rect.left, top: rect.top };
-      needsFontReset = true;
+
+      // Rebuild atlas if DPR changed
+      if (dpr !== currentDpr) {
+        currentDpr = dpr;
+        atlas = buildAtlas(dpr);
+      }
+
       initColumns();
     }
 
@@ -159,9 +216,6 @@ export default function MatrixRain() {
       }
     }
 
-    resize();
-    window.addEventListener('resize', resize);
-
     // Mouse tracking — use cached rect instead of getBoundingClientRect every move
     function handleMouseMove(e: MouseEvent) {
       mouseRef.current = {
@@ -206,25 +260,24 @@ export default function MatrixRain() {
     // Hook
     uctx.beginPath(); uctx.arc(-3, 16, 3, 0, Math.PI, false); uctx.stroke();
 
-    // Set font once
-    ctx.font = `${CHAR_SIZE}px 'IBM Plex Mono', monospace`;
-    ctx.textAlign = 'center';
-
     function animate() {
-      if (!ctx) return;
+      if (!ctx || !atlas) return;
 
       const mouse = mouseRef.current;
       const columns = columnsRef.current;
       const splashes = splashesRef.current;
       const numCols = columns.length;
+      const dpr = currentDpr;
+
+      const aCellW = atlas.cellW;
+      const aCellH = atlas.cellH;
+      const aCellWDpr = aCellW * dpr;
+      const aCellHDpr = aCellH * dpr;
+      const aCanvas = atlas.canvas;
+      const halfCellW = aCellW / 2;
+      const halfCellH = aCellH / 2;
 
       ctx.clearRect(0, 0, w, h);
-
-      if (needsFontReset) {
-        ctx.font = `${CHAR_SIZE}px 'IBM Plex Mono', monospace`;
-        ctx.textAlign = 'center';
-        needsFontReset = false;
-      }
 
       // Mouse collision vars — hoist outside loop
       const hasMouse = mouse !== null;
@@ -315,26 +368,40 @@ export default function MatrixRain() {
           col.charOffset = newOffset;
         }
 
-        // --- Draw characters ---
+        // --- Draw characters from atlas ---
         for (let pi = 0; pi < numParts; pi++) {
           const p = parts[pi];
           if (p.y < -CHAR_SIZE || p.y > h + CHAR_SIZE) continue;
           if (p.opacity <= 0.02) continue;
 
-          const color = getOpacityColor(p.opacity);
-          if (color !== lastColor) {
-            ctx.fillStyle = color;
-            lastColor = color;
-          }
+          // Quantize opacity to atlas level
+          const levelIdx = Math.round(p.opacity * (ATLAS_LEVELS - 1));
+          const charIdx = PI_ATLAS_INDEX[p.charIndex];
+          const srcX = charIdx * aCellWDpr;
+          const srcY = levelIdx * aCellHDpr;
 
           if (p.deflected && p.rotation !== 0) {
-            ctx.save();
-            ctx.translate(p.x, p.y);
-            ctx.rotate(p.rotation);
-            ctx.fillText(PI_DIGITS[p.charIndex], 0, 0);
-            ctx.restore();
+            // Use setTransform instead of save/translate/rotate/restore
+            const cos = Math.cos(p.rotation);
+            const sin = Math.sin(p.rotation);
+            ctx.setTransform(
+              dpr * cos, dpr * sin,
+              -dpr * sin, dpr * cos,
+              dpr * p.x, dpr * p.y
+            );
+            ctx.drawImage(
+              aCanvas,
+              srcX, srcY, aCellWDpr, aCellHDpr,
+              -halfCellW, -halfCellH, aCellW, aCellH
+            );
+            // Reset to base DPR transform
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           } else {
-            ctx.fillText(PI_DIGITS[p.charIndex], p.x, p.y);
+            ctx.drawImage(
+              aCanvas,
+              srcX, srcY, aCellWDpr, aCellHDpr,
+              p.x - halfCellW, p.y - halfCellH, aCellW, aCellH
+            );
           }
         }
       }
@@ -371,7 +438,14 @@ export default function MatrixRain() {
       frameRef.current = requestAnimationFrame(animate);
     }
 
-    frameRef.current = requestAnimationFrame(animate);
+    // Wait for font to load before building atlas and starting animation
+    resize();
+    window.addEventListener('resize', resize);
+
+    document.fonts.ready.then(() => {
+      atlas = buildAtlas(currentDpr);
+      frameRef.current = requestAnimationFrame(animate);
+    });
 
     return () => {
       cancelAnimationFrame(frameRef.current);

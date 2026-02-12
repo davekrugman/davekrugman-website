@@ -27,6 +27,8 @@
   filter: blur(120px);
   opacity: 0.08;
   pointer-events: none;
+  will-change: transform;
+  contain: strict;
 }
 
 .heroGlow1 {
