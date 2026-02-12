@@ -9,7 +9,9 @@ const PI_DIGITS =
 
 const CHAR_SIZE = 13;
 const COL_SPACING = 16;
-const MAX_SPLASHES = 240;
+const MAX_SPLASHES = 120;
+const COLLISION_RADIUS = 18;
+const COLLISION_RADIUS_SQ = COLLISION_RADIUS * COLLISION_RADIUS;
 
 interface CharParticle {
   baseX: number;
@@ -43,6 +45,7 @@ interface SplashParticle {
   life: number;
   maxLife: number;
   size: number;
+  active: boolean;
 }
 
 export default function MatrixRain() {
@@ -51,6 +54,7 @@ export default function MatrixRain() {
   const mouseRef = useRef<{ x: number; y: number } | null>(null);
   const frameRef = useRef<number>(0);
   const splashesRef = useRef<SplashParticle[]>([]);
+  const splashIndexRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -108,35 +112,32 @@ export default function MatrixRain() {
       }
 
       columnsRef.current = columns;
+
+      // Pre-allocate splash pool
+      const splashes: SplashParticle[] = [];
+      for (let i = 0; i < MAX_SPLASHES; i++) {
+        splashes.push({ x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 0, size: 0, active: false });
+      }
+      splashesRef.current = splashes;
+      splashIndexRef.current = 0;
     }
 
-    // Spawn splash particles at collision point
+    // Spawn splash particles using ring buffer (no shift/splice)
     function spawnSplash(x: number, y: number, nx: number, ny: number) {
       const splashes = splashesRef.current;
       const count = 2 + Math.floor(Math.random() * 3);
       for (let i = 0; i < count; i++) {
-        if (splashes.length >= MAX_SPLASHES) {
-          // Recycle oldest
-          const oldest = splashes.shift()!;
-          oldest.x = x;
-          oldest.y = y;
-          oldest.vx = nx * (1 + Math.random() * 3) + (Math.random() - 0.5) * 2;
-          oldest.vy = ny * (1 + Math.random() * 2) - Math.random() * 1.5;
-          oldest.life = 0;
-          oldest.maxLife = 15 + Math.floor(Math.random() * 20);
-          oldest.size = 1 + Math.random() * 1.5;
-          splashes.push(oldest);
-        } else {
-          splashes.push({
-            x,
-            y,
-            vx: nx * (1 + Math.random() * 3) + (Math.random() - 0.5) * 2,
-            vy: ny * (1 + Math.random() * 2) - Math.random() * 1.5,
-            life: 0,
-            maxLife: 15 + Math.floor(Math.random() * 20),
-            size: 1 + Math.random() * 1.5,
-          });
-        }
+        const idx = splashIndexRef.current % MAX_SPLASHES;
+        splashIndexRef.current++;
+        const s = splashes[idx];
+        s.x = x;
+        s.y = y;
+        s.vx = nx * (1 + Math.random() * 3) + (Math.random() - 0.5) * 2;
+        s.vy = ny * (1 + Math.random() * 2) - Math.random() * 1.5;
+        s.life = 0;
+        s.maxLife = 15 + Math.floor(Math.random() * 20);
+        s.size = 1 + Math.random() * 1.5;
+        s.active = true;
       }
     }
 
@@ -158,39 +159,40 @@ export default function MatrixRain() {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseleave', handleMouseLeave);
 
-    // Draw umbrella helper — solid silhouette with cutout scallops
-    function drawUmbrella(ctx: CanvasRenderingContext2D, mx: number, my: number) {
-      const green = '#00ff41';
-      ctx.save();
-      ctx.translate(mx, my);
-      ctx.lineCap = 'round';
+    // Pre-render umbrella to offscreen canvas
+    const umbrellaCanvas = document.createElement('canvas');
+    const umbrellaSize = 80;
+    umbrellaCanvas.width = umbrellaSize;
+    umbrellaCanvas.height = umbrellaSize;
+    const uctx = umbrellaCanvas.getContext('2d')!;
+    const ucx = umbrellaSize / 2;
+    const ucy = umbrellaSize / 2;
+    const green = '#00ff41';
+    uctx.translate(ucx, ucy);
+    uctx.lineCap = 'round';
+    // Filled canopy
+    uctx.beginPath();
+    uctx.arc(0, -2, 16, Math.PI, 0);
+    uctx.closePath();
+    uctx.fillStyle = green;
+    uctx.fill();
+    // Cut scallops
+    uctx.fillStyle = '#0a0a0c';
+    uctx.beginPath(); uctx.arc(-8, -2, 5, 0, Math.PI); uctx.fill();
+    uctx.beginPath(); uctx.arc(0, -2, 5, 0, Math.PI); uctx.fill();
+    uctx.beginPath(); uctx.arc(8, -2, 5, 0, Math.PI); uctx.fill();
+    // Tip
+    uctx.strokeStyle = green;
+    uctx.lineWidth = 2;
+    uctx.beginPath(); uctx.moveTo(0, -18); uctx.lineTo(0, -22); uctx.stroke();
+    // Handle
+    uctx.beginPath(); uctx.moveTo(0, -2); uctx.lineTo(0, 16); uctx.stroke();
+    // Hook
+    uctx.beginPath(); uctx.arc(-3, 16, 3, 0, Math.PI, false); uctx.stroke();
 
-      // Filled canopy
-      ctx.beginPath();
-      ctx.arc(0, -2, 16, Math.PI, 0);
-      ctx.closePath();
-      ctx.fillStyle = green;
-      ctx.fill();
-
-      // Cut scallops out of canopy
-      ctx.fillStyle = '#0a0a0c';
-      ctx.beginPath(); ctx.arc(-8, -2, 5, 0, Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(0, -2, 5, 0, Math.PI); ctx.fill();
-      ctx.beginPath(); ctx.arc(8, -2, 5, 0, Math.PI); ctx.fill();
-
-      // Tip
-      ctx.strokeStyle = green;
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(0, -18); ctx.lineTo(0, -22); ctx.stroke();
-
-      // Handle
-      ctx.beginPath(); ctx.moveTo(0, -2); ctx.lineTo(0, 16); ctx.stroke();
-
-      // Hook
-      ctx.beginPath(); ctx.arc(-3, 16, 3, 0, Math.PI, false); ctx.stroke();
-
-      ctx.restore();
-    }
+    // Set font once
+    ctx.font = `${CHAR_SIZE}px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = 'center';
 
     function animate() {
       if (!canvas || !ctx) return;
@@ -199,84 +201,76 @@ export default function MatrixRain() {
       const columns = columnsRef.current;
       const splashes = splashesRef.current;
 
-      // Clear with full transparency for clean rendering
       ctx.clearRect(0, 0, w, h);
+
+      // Re-set font only if canvas was resized (setTransform resets it)
+      // Font is set once outside animate, but after resize it needs resetting
       ctx.font = `${CHAR_SIZE}px 'IBM Plex Mono', monospace`;
       ctx.textAlign = 'center';
+
+      // Disable shadow globally — we'll skip the head glow for performance
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
 
       for (const col of columns) {
         const headParticle = col.particles[0];
 
         for (const p of col.particles) {
           if (!p.deflected) {
-            // Return to column x position (gentle spring back) — only if not deflected
             const returnForce = (p.baseX - p.x) * 0.03;
             p.vx += returnForce;
           }
 
-          // Gravity — pull vy back toward base fall speed
-          // Gentle lerp so bounced characters float up before falling back
           p.vy += (p.baseSpeed - p.vy) * 0.06;
 
           if (mouse) {
-            // Sphere collision — matches umbrella canopy arc exactly
-            // Umbrella canopy: ctx.arc(0, -2, 16, Math.PI, 0)
-            // Center at (mouse.x, mouse.y - 2), radius 16
             const cx = mouse.x;
             const cy = mouse.y - 2;
-            const radius = 18; // 16px canopy + 2px margin
 
             const dx = p.x - cx;
             const dy = p.y - cy;
-            const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // Only collide with upper half of sphere (the canopy)
-            if (dist < radius && dy <= 0) {
-              p.deflected = true;
+            // Use squared distance to avoid sqrt
+            if (dy <= 0) {
+              const distSq = dx * dx + dy * dy;
+              if (distSq < COLLISION_RADIUS_SQ && distSq > 0) {
+                p.deflected = true;
+                const dist = Math.sqrt(distSq);
 
-              // Surface normal — radiates outward from center
-              const nx = dx / dist;
-              const ny = dy / dist;
+                const nx = dx / dist;
+                const ny = dy / dist;
 
-              // Push particle just outside the sphere surface
-              p.x = cx + nx * (radius + 2);
-              p.y = cy + ny * (radius + 2);
+                p.x = cx + nx * (COLLISION_RADIUS + 2);
+                p.y = cy + ny * (COLLISION_RADIUS + 2);
 
-              // Reflect velocity off curved surface — gentle
-              const dot = p.vx * nx + p.vy * ny;
-              if (dot < 0) {
-                p.vx -= dot * nx * 0.6;
-                p.vy -= dot * ny * 0.3;
-              }
+                const dot = p.vx * nx + p.vy * ny;
+                if (dot < 0) {
+                  p.vx -= dot * nx * 0.6;
+                  p.vy -= dot * ny * 0.3;
+                }
 
-              // Tiny nudge along the surface normal
-              p.vx += nx * 0.2;
-              p.vy += ny * 0.1;
+                p.vx += nx * 0.2;
+                p.vy += ny * 0.1;
 
-              // Tumble — right side spins clockwise, left side counterclockwise
-              const side = dx >= 0 ? 1 : -1;
-              p.rotationSpeed = side * (0.05 + Math.random() * 0.1);
+                const side = dx >= 0 ? 1 : -1;
+                p.rotationSpeed = side * (0.05 + Math.random() * 0.1);
 
-              // Spawn splash particles from any digit in the trail
-              if (Math.random() > 0.4) {
-                spawnSplash(p.x, p.y, nx, ny);
+                // Only spawn splashes from head particles (trailPos 0) to reduce count
+                if (p.trailPos === 0 && Math.random() > 0.3) {
+                  spawnSplash(p.x, p.y, nx, ny);
+                }
               }
             }
           }
 
-          // Damping on horizontal — stronger when in column, lighter when deflected
           p.vx *= p.deflected ? 0.99 : 0.94;
-
-          // Apply velocity
           p.x += p.vx;
           p.y += p.vy;
 
-          // Update rotation for deflected particles
           if (p.deflected) {
             p.rotation += p.rotationSpeed;
           }
 
-          // Calculate opacity based on trail position
           const trailFade = 1 - p.trailPos / p.trailLength;
           p.opacity = p.trailPos === 0 ? 0.85 : trailFade * 0.45;
         }
@@ -309,17 +303,8 @@ export default function MatrixRain() {
           if (p.opacity <= 0.02) continue;
 
           const char = PI_DIGITS[p.charIndex];
-
-          // Head glow
-          if (p.trailPos === 0) {
-            ctx.shadowColor = 'rgba(0, 255, 65, 0.5)';
-            ctx.shadowBlur = 10;
-          } else {
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 0;
-          }
-
           ctx.fillStyle = `rgba(0, 255, 65, ${p.opacity})`;
+
           if (p.deflected && p.rotation !== 0) {
             ctx.save();
             ctx.translate(p.x, p.y);
@@ -332,20 +317,19 @@ export default function MatrixRain() {
         }
       }
 
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-
-      // --- Update and draw splash particles ---
-      for (let i = splashes.length - 1; i >= 0; i--) {
+      // --- Update and draw splash particles (ring buffer, no splice) ---
+      for (let i = 0; i < MAX_SPLASHES; i++) {
         const s = splashes[i];
+        if (!s.active) continue;
+
         s.life++;
-        s.vy += 0.15; // gravity on splashes
+        s.vy += 0.15;
         s.x += s.vx;
         s.y += s.vy;
-        s.vx *= 0.97; // air resistance
+        s.vx *= 0.97;
 
         if (s.life >= s.maxLife) {
-          splashes.splice(i, 1);
+          s.active = false;
           continue;
         }
 
@@ -354,9 +338,9 @@ export default function MatrixRain() {
         ctx.fillRect(s.x - s.size / 2, s.y - s.size / 2, s.size, s.size);
       }
 
-      // Draw umbrella at mouse position
+      // Draw umbrella from pre-rendered canvas (single drawImage instead of 8 arc calls)
       if (mouse) {
-        drawUmbrella(ctx, mouse.x, mouse.y);
+        ctx.drawImage(umbrellaCanvas, mouse.x - ucx, mouse.y - ucy);
       }
 
       frameRef.current = requestAnimationFrame(animate);
