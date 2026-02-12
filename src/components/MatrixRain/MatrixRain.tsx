@@ -8,6 +8,7 @@ const COL_SPACING = 16;
 const MAX_SPLASHES = 80;
 const COLLISION_RADIUS = 18;
 const COLLISION_RADIUS_SQ = COLLISION_RADIUS * COLLISION_RADIUS;
+const UMBRELLA_Y_OFFSET = 21;
 
 // Atlas constants
 const ATLAS_LEVELS = 21; // opacity levels: 0.00, 0.05, ..., 1.00
@@ -308,7 +309,7 @@ export default function MatrixRain() {
 
           if (hasMouse) {
             const dx = p.x - mx;
-            const dy = p.y - my;
+            const dy = p.y - (my - UMBRELLA_Y_OFFSET);
 
             if (dy <= 0) {
               const distSq = dx * dx + dy * dy;
@@ -319,7 +320,7 @@ export default function MatrixRain() {
                 const ny = dy / dist;
 
                 p.x = mx + nx * (COLLISION_RADIUS + 2);
-                p.y = my + ny * (COLLISION_RADIUS + 2);
+                p.y = (my - UMBRELLA_Y_OFFSET) + ny * (COLLISION_RADIUS + 2);
 
                 const dot = p.vx * nx + p.vy * ny;
                 if (dot < 0) {
@@ -438,7 +439,7 @@ export default function MatrixRain() {
 
       // Draw umbrella
       if (hasMouse) {
-        ctx.drawImage(umbrellaCanvas, mx - ucx, my + 2 - ucy);
+        ctx.drawImage(umbrellaCanvas, mx - ucx, my - UMBRELLA_Y_OFFSET + 2 - ucy);
       }
 
       frameRef.current = requestAnimationFrame(animate);
