@@ -3,11 +3,6 @@
 import { useEffect, useRef } from 'react';
 import styles from './MatrixRain.module.css';
 
-// First 1000 digits of pi
-const PI_DIGITS =
-  '3141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844609550582231725359408128481117450284102701938521105559644622948954930381964428810975665933446128475648233786783165271201909145648566923460348610454326648213393607260249141273724587006606315588174881520920962829254091715364367892590360011330530548820466521384146951941511609433057270365759591953092186117381932611793105118548074462379962749567351885752724891227938183011949129833673362440656643086021394946395224737190702179860943702770539217176293176752384674818467669405132000568127145263560827785771342757789609173637178721468440901224953430146549585371050792279689258923542019956112129021960864034418159813629774771309960518707211349999998372978049951059731732816096318595024459455346908302642522308253344685035261931188171010003137838752886587533208381420617177669147303598253490428755468731159562863882353787593751957781857780532171226806613001927876611195909216420199';
-
-const PI_LEN = PI_DIGITS.length;
 const CHAR_SIZE = 13;
 const COL_SPACING = 16;
 const MAX_SPLASHES = 80;
@@ -25,12 +20,6 @@ for (let i = 0; i < ATLAS_CHAR_COUNT; i++) {
   CHAR_TO_ATLAS[ATLAS_CHARS.charCodeAt(i)] = i;
 }
 
-// Pre-compute PI_DIGITS -> atlas column indices for fast lookup
-const PI_ATLAS_INDEX: number[] = new Array(PI_LEN);
-for (let i = 0; i < PI_LEN; i++) {
-  PI_ATLAS_INDEX[i] = CHAR_TO_ATLAS[PI_DIGITS.charCodeAt(i)];
-}
-
 // Pre-compute opacity strings for splash particles (which still use fillRect)
 const OPACITY_CACHE: string[] = [];
 for (let i = 0; i <= 100; i++) {
@@ -40,6 +29,16 @@ for (let i = 0; i <= 100; i++) {
 function getOpacityColor(opacity: number): string {
   const idx = (opacity * 100) | 0;
   return OPACITY_CACHE[idx < 0 ? 0 : idx > 100 ? 100 : idx];
+}
+
+// Convert a string to atlas column indices for fast lookup
+function stringToAtlasIndices(str: string): number[] {
+  const indices: number[] = new Array(str.length);
+  for (let i = 0; i < str.length; i++) {
+    const code = str.charCodeAt(i);
+    indices[i] = code < 128 ? CHAR_TO_ATLAS[code] : 0;
+  }
+  return indices;
 }
 
 interface Atlas {
@@ -82,7 +81,7 @@ interface CharParticle {
   vy: number;
   vx: number;
   baseSpeed: number;
-  charIndex: number;
+  charIndex: number; // index into the column's atlasIndices array
   opacity: number;
   trailPos: number;
   trailLength: number;
@@ -94,9 +93,11 @@ interface CharParticle {
 interface Column {
   x: number;
   particles: CharParticle[];
-  charOffset: number;
   speed: number;
   trailLength: number;
+  stringIdx: number;       // which string from the CSV this column uses
+  atlasIndices: number[];  // pre-computed atlas indices for this column's string
+  strLen: number;          // length of the string
 }
 
 interface SplashParticle {
@@ -129,7 +130,11 @@ export default function MatrixRain() {
     let currentDpr = 1;
     let atlas: Atlas | null = null;
 
-    // Cache canvas rect for mousemove (avoid getBoundingClientRect every move)
+    // Rain strings loaded from CSV — each string becomes a vertical column
+    let rainStrings: string[] = [];
+    let rainAtlasIndices: number[][] = [];
+
+    // Cache canvas rect for mousemove
     let canvasRect = { left: 0, top: 0 };
 
     function resize() {
@@ -143,13 +148,14 @@ export default function MatrixRain() {
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       canvasRect = { left: rect.left, top: rect.top };
 
-      // Rebuild atlas if DPR changed
       if (dpr !== currentDpr) {
         currentDpr = dpr;
         atlas = buildAtlas(dpr);
       }
 
-      initColumns();
+      if (rainStrings.length > 0) {
+        initColumns();
+      }
     }
 
     function initColumns() {
@@ -160,7 +166,12 @@ export default function MatrixRain() {
         const x = c * COL_SPACING + COL_SPACING / 2;
         const speed = 1.05 + Math.random() * 1.05;
         const trailLength = 10 + Math.floor(Math.random() * 12);
-        const charOffset = Math.floor(Math.random() * PI_LEN);
+
+        // Pick a random string for this column
+        const stringIdx = Math.floor(Math.random() * rainStrings.length);
+        const atlasIndices = rainAtlasIndices[stringIdx];
+        const strLen = rainStrings[stringIdx].length;
+        const charOffset = Math.floor(Math.random() * strLen);
 
         const startY = Math.random() * h * 2 - h;
 
@@ -173,7 +184,7 @@ export default function MatrixRain() {
             vy: speed,
             vx: 0,
             baseSpeed: speed,
-            charIndex: (charOffset + i) % PI_LEN,
+            charIndex: (charOffset + i) % strLen,
             opacity: 0,
             trailPos: i,
             trailLength,
@@ -183,7 +194,7 @@ export default function MatrixRain() {
           });
         }
 
-        columns.push({ x, particles, charOffset, speed, trailLength });
+        columns.push({ x, particles, speed, trailLength, stringIdx, atlasIndices, strLen });
       }
 
       columnsRef.current = columns;
@@ -197,7 +208,6 @@ export default function MatrixRain() {
       splashIndexRef.current = 0;
     }
 
-    // Spawn splash particles using ring buffer (no shift/splice)
     function spawnSplash(x: number, y: number, nx: number, ny: number) {
       const splashes = splashesRef.current;
       const count = 2 + Math.floor(Math.random() * 3);
@@ -216,7 +226,6 @@ export default function MatrixRain() {
       }
     }
 
-    // Mouse tracking — use cached rect instead of getBoundingClientRect every move
     function handleMouseMove(e: MouseEvent) {
       mouseRef.current = {
         x: e.clientX - canvasRect.left,
@@ -240,24 +249,19 @@ export default function MatrixRain() {
     const green = '#00ff41';
     uctx.translate(ucx, ucy);
     uctx.lineCap = 'round';
-    // Filled canopy
     uctx.beginPath();
     uctx.arc(0, -2, 16, Math.PI, 0);
     uctx.closePath();
     uctx.fillStyle = green;
     uctx.fill();
-    // Cut scallops
     uctx.fillStyle = '#0a0a0c';
     uctx.beginPath(); uctx.arc(-8, -2, 5, 0, Math.PI); uctx.fill();
     uctx.beginPath(); uctx.arc(0, -2, 5, 0, Math.PI); uctx.fill();
     uctx.beginPath(); uctx.arc(8, -2, 5, 0, Math.PI); uctx.fill();
-    // Tip
     uctx.strokeStyle = green;
     uctx.lineWidth = 2;
     uctx.beginPath(); uctx.moveTo(0, -18); uctx.lineTo(0, -22); uctx.stroke();
-    // Handle
     uctx.beginPath(); uctx.moveTo(0, -2); uctx.lineTo(0, 16); uctx.stroke();
-    // Hook
     uctx.beginPath(); uctx.arc(-3, 16, 3, 0, Math.PI, false); uctx.stroke();
 
     function animate() {
@@ -279,7 +283,6 @@ export default function MatrixRain() {
 
       ctx.clearRect(0, 0, w, h);
 
-      // Mouse collision vars — hoist outside loop
       const hasMouse = mouse !== null;
       const mx = hasMouse ? mouse!.x : 0;
       const my = hasMouse ? mouse!.y - 2 : 0;
@@ -291,6 +294,7 @@ export default function MatrixRain() {
         const parts = col.particles;
         const numParts = parts.length;
         const headParticle = parts[0];
+        const colAtlas = col.atlasIndices;
 
         // --- Physics update ---
         for (let pi = 0; pi < numParts; pi++) {
@@ -349,7 +353,13 @@ export default function MatrixRain() {
         // Reset column when head goes past bottom
         if (headParticle.y > h + col.trailLength * CHAR_SIZE) {
           const newSpeed = 1.05 + Math.random() * 1.05;
-          const newOffset = Math.floor(Math.random() * PI_LEN);
+
+          // Pick a new random string on reset
+          const newStringIdx = Math.floor(Math.random() * rainStrings.length);
+          col.stringIdx = newStringIdx;
+          col.atlasIndices = rainAtlasIndices[newStringIdx];
+          col.strLen = rainStrings[newStringIdx].length;
+          const newOffset = Math.floor(Math.random() * col.strLen);
 
           for (let i = 0; i < numParts; i++) {
             const p = parts[i];
@@ -359,13 +369,12 @@ export default function MatrixRain() {
             p.vx = 0;
             p.vy = newSpeed;
             p.baseSpeed = newSpeed;
-            p.charIndex = (newOffset + i) % PI_LEN;
+            p.charIndex = (newOffset + i) % col.strLen;
             p.deflected = false;
             p.rotation = 0;
             p.rotationSpeed = 0;
           }
           col.speed = newSpeed;
-          col.charOffset = newOffset;
         }
 
         // --- Draw characters from atlas ---
@@ -374,14 +383,12 @@ export default function MatrixRain() {
           if (p.y < -CHAR_SIZE || p.y > h + CHAR_SIZE) continue;
           if (p.opacity <= 0.02) continue;
 
-          // Quantize opacity to atlas level
           const levelIdx = Math.round(p.opacity * (ATLAS_LEVELS - 1));
-          const charIdx = PI_ATLAS_INDEX[p.charIndex];
+          const charIdx = colAtlas[p.charIndex];
           const srcX = charIdx * aCellWDpr;
           const srcY = levelIdx * aCellHDpr;
 
           if (p.deflected && p.rotation !== 0) {
-            // Use setTransform instead of save/translate/rotate/restore
             const cos = Math.cos(p.rotation);
             const sin = Math.sin(p.rotation);
             ctx.setTransform(
@@ -394,7 +401,6 @@ export default function MatrixRain() {
               srcX, srcY, aCellWDpr, aCellHDpr,
               -halfCellW, -halfCellH, aCellW, aCellH
             );
-            // Reset to base DPR transform
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           } else {
             ctx.drawImage(
@@ -438,12 +444,22 @@ export default function MatrixRain() {
       frameRef.current = requestAnimationFrame(animate);
     }
 
-    // Wait for font to load before building atlas and starting animation
+    // Initialize: fetch CSV, wait for font, build atlas, start animation
     resize();
     window.addEventListener('resize', resize);
 
-    document.fonts.ready.then(() => {
+    Promise.all([
+      fetch('/data/rain-strings.csv')
+        .then(r => r.text())
+        .then(text => {
+          const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+          rainStrings = lines;
+          rainAtlasIndices = lines.map(s => stringToAtlasIndices(s));
+        }),
+      document.fonts.ready,
+    ]).then(() => {
       atlas = buildAtlas(currentDpr);
+      initColumns();
       frameRef.current = requestAnimationFrame(animate);
     });
 

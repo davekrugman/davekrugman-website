@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ScrollReveal from '@/components/ScrollReveal/ScrollReveal';
 import DisableCRT from '@/components/DisableCRT/DisableCRT';
+import Lightbox from '@/components/Lightbox/Lightbox';
 import { getProjects, getProject } from '@/data/photography';
 import styles from './page.module.css';
 
@@ -47,25 +48,27 @@ export default async function ProjectGalleryPage({ params }: PageProps) {
         </div>
       </ScrollReveal>
 
-      <div className={styles.gallery}>
-        {project.images.map((src, i) => (
-          <div key={src} className={styles.galleryItem}>
-            <Image
-              src={src}
-              alt={`${project.title} — ${i + 1}`}
-              width={1600}
-              height={1200}
-              sizes="(max-width: 600px) 100vw, (max-width: 968px) 50vw, 50vw"
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-              }}
-              quality={85}
-            />
-          </div>
-        ))}
-      </div>
+      <Lightbox images={project.images} projectTitle={project.title}>
+        <div className={styles.gallery}>
+          {project.images.map((src, i) => (
+            <div key={src} className={styles.galleryItem} data-lightbox-index={i}>
+              <Image
+                src={src}
+                alt={`${project.title} — ${i + 1}`}
+                width={1600}
+                height={1200}
+                sizes="(max-width: 600px) 100vw, (max-width: 968px) 50vw, 50vw"
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                }}
+                quality={85}
+              />
+            </div>
+          ))}
+        </div>
+      </Lightbox>
     </section>
   );
 }

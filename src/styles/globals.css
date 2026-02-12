@@ -19,6 +19,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* Prevent right-click save on images */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
 html {
   scroll-behavior: smooth;
   scrollbar-width: thin;

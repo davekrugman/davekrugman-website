@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Mono, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import Nav from '@/components/Nav/Nav';
 import Footer from '@/components/Footer/Footer';
+import ImageProtect from '@/components/ImageProtect/ImageProtect';
 import '@/styles/globals.css';
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${ibmPlexMono.variable} ${jetbrainsMono.variable} ${spaceGrotesk.variable}`}>
       <body>
+        <ImageProtect />
         <Nav />
         <main>{children}</main>
         <Footer />
