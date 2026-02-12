@@ -83,7 +83,7 @@ export default function MatrixRain() {
 
       for (let c = 0; c < numCols; c++) {
         const x = c * COL_SPACING + COL_SPACING / 2;
-        const speed = 1 + Math.random() * 1.5;
+        const speed = 3.5 + Math.random() * 3.5;
         const trailLength = 10 + Math.floor(Math.random() * 12);
         const charOffset = Math.floor(Math.random() * PI_DIGITS.length);
 
@@ -277,7 +277,7 @@ export default function MatrixRain() {
 
         // Reset column when head goes past bottom
         if (headParticle.y > h + col.trailLength * CHAR_SIZE) {
-          const newSpeed = 1 + Math.random() * 1.5;
+          const newSpeed = 3 + Math.random() * 3;
           const newOffset = Math.floor(Math.random() * PI_DIGITS.length);
 
           for (let i = 0; i < col.particles.length; i++) {
