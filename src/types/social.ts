@@ -7,6 +7,7 @@ export interface SocialPost {
   date: string | null;
   description?: string;
   imageUrl?: string;
+  readingTime?: number;
 }
 
 export interface SocialFeedResponse {

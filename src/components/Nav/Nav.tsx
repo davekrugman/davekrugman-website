@@ -8,6 +8,7 @@ import styles from './Nav.module.css';
 const navItems = [
   { href: '/photography', label: 'Photography' },
   { href: '/digital-art', label: 'Digital Art' },
+  { href: '/writing', label: 'Writing' },
   { href: '/dashboard', label: 'Feed' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },

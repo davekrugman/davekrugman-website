@@ -5,7 +5,7 @@ import fallbackData from '@/data/fallback-substack.json';
 export const revalidate = 900;
 
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
+  return html.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ').trim();
 }
 
 export async function GET() {
@@ -17,7 +17,7 @@ export async function GET() {
 
       if (res.ok) {
         const xml = await res.text();
-        const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 5);
+        const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].slice(0, 20);
 
         if (items.length > 0) {
           const posts: SocialPost[] = items
@@ -39,14 +39,21 @@ export async function GET() {
                 item.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>/) ||
                 item.match(/<description>([\s\S]*?)<\/description>/);
               const rawDesc = descMatch ? descMatch[1].trim() : '';
-              const description = stripHtml(rawDesc).slice(0, 200);
+              const description = stripHtml(rawDesc).slice(0, 400);
 
               const enclosureMatch = item.match(/<enclosure[^>]+url="([^"]+)"/);
               const mediaMatch = item.match(/<media:content[^>]+url="([^"]+)"/);
               const imgMatch = rawDesc.match(/<img[^>]+src="([^"]+)"/);
               const imageUrl = enclosureMatch?.[1] || mediaMatch?.[1] || imgMatch?.[1] || undefined;
 
-              return { platform: 'substack' as const, text, url, date, description, imageUrl };
+              // Reading time from content:encoded
+              const contentMatch =
+                item.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/) ||
+                item.match(/<content:encoded>([\s\S]*?)<\/content:encoded>/);
+              const wordCount = contentMatch ? stripHtml(contentMatch[1]).split(/\s+/).filter(Boolean).length : 0;
+              const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+              return { platform: 'substack' as const, text, url, date, description, imageUrl, readingTime };
             })
             .filter((p) => p.text && p.url);
 
