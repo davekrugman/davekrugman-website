@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import TweetTicker from '@/components/TweetTicker/TweetTicker';
 import MatrixRain from '@/components/MatrixRain/MatrixRain';
 import styles from './Hero.module.css';
 
@@ -40,10 +39,8 @@ export default function Hero() {
         <span className={`${styles.line} ${styles.outline}`}>Krugman</span>
       </h1>
       <p className={styles.heroSubtitle}>
-        Photographer, writer, and digital artist. Creating work at the intersection of technology and art. Documenting the beauty at confluences of circumstance.
+        Photographer, writer, and digital artist. Creating work at the intersection of technology and art. Documenting beauty at the confluences of circumstance.
       </p>
-
-      <TweetTicker />
 
       <div className={styles.heroSocials}>
         <a href="https://instagram.com/dave.krugman" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
@@ -51,11 +48,6 @@ export default function Hero() {
             <rect x="2" y="2" width="20" height="20" rx="5" />
             <circle cx="12" cy="12" r="5" />
             <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-          </svg>
-        </a>
-        <a href="https://x.com/davekrugman" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="X">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
           </svg>
         </a>
         <a href="https://www.threads.net/@dave.krugman" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
