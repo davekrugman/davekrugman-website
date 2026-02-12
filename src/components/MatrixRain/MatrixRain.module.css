@@ -1,0 +1,21 @@
+.canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 55%;
+  height: 100%;
+  opacity: 0;
+  animation: fadeIn 2s ease 0.3s forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 968px) {
+  .canvas {
+    display: none;
+  }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
