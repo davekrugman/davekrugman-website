@@ -181,11 +181,23 @@
   animation: fadeUp 0.8s var(--transition) 1.2s forwards;
 }
 
-.scrollLine {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--accent), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
+.scrollParticles {
+  position: relative;
+  width: 2.5rem;
+  height: 50px;
+  overflow: visible;
+}
+
+.scrollParticle {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particleFall 3s ease-in infinite;
+  box-shadow: 0 0 4px var(--accent-dim);
 }
 
 @media (max-width: 968px) {
@@ -219,7 +231,8 @@
   50% { opacity: 0; }
 }
 
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.2); }
+@keyframes particleFall {
+  0% { opacity: 0; transform: translateY(0); }
+  15% { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(45px); }
 }

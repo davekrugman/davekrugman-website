@@ -78,7 +78,11 @@ export default function Hero() {
 
       <div className={styles.heroScroll}>
         <span>scroll</span>
-        <div className={styles.scrollLine}></div>
+        <div className={styles.scrollParticles}>
+          {[15, 45, 70, 30, 82, 55].map((pos, i) => (
+            <div key={i} className={styles.scrollParticle} style={{ animationDelay: `${i * 0.5}s`, left: `${pos}%` }} />
+          ))}
+        </div>
       </div>
     </section>
   );
