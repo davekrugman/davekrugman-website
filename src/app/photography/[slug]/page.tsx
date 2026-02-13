@@ -25,6 +25,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${project.title} | Dave Krugman`,
     description: `${project.title} — a photography project by Dave Krugman. ${project.imageCount} works.`,
+    openGraph: {
+      title: `${project.title} | Dave Krugman`,
+      description: `${project.title} — a photography project by Dave Krugman. ${project.imageCount} works.`,
+      images: [
+        {
+          url: `/og/photography/${slug}.jpg`,
+          width: 1200,
+          height: 630,
+          alt: project.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.title} | Dave Krugman`,
+      images: [`/og/photography/${slug}.jpg`],
+    },
   };
 }
 
