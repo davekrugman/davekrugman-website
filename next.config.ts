@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     '/*': ['./public/images/photography/**'],
   },
   images: {
-    qualities: [70, 75, 85],
+    qualities: [70, 75, 80, 85],
   },
 };
 

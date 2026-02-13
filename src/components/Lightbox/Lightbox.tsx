@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, type ReactNode, type MouseEvent } from 'react';
 import { createPortal } from 'react-dom';
+import Image from 'next/image';
 import styles from './Lightbox.module.css';
 
 interface LightboxProps {
@@ -127,11 +128,15 @@ export default function Lightbox({ images, projectTitle, children }: LightboxPro
       )}
 
       <div className={styles.imageWrap}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           className={styles.lightboxImage}
-          src={`/_next/image?url=${encodeURIComponent(images[activeIndex])}&w=3840&q=80`}
+          src={images[activeIndex]}
           alt={`${projectTitle} — ${activeIndex + 1}`}
+          width={3840}
+          height={2560}
+          quality={80}
+          sizes="100vw"
+          priority
         />
         <button className={styles.close} onClick={close} aria-label="Close lightbox">
           ×
