@@ -21,7 +21,15 @@ export async function POST(request: Request) {
       );
     }
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) {
+      console.error('RESEND_API_KEY is not set. Available env keys:', Object.keys(process.env).filter(k => k.includes('RESEND')));
+      return NextResponse.json(
+        { error: 'Email service is not configured.' },
+        { status: 500 }
+      );
+    }
+    const resend = new Resend(apiKey);
 
     await resend.emails.send({
       from: 'Contact Form <contact@davekrugman.com>',
