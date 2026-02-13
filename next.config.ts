@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     '/*': ['./public/images/photography/**'],
   },
+  images: {
+    qualities: [70, 75, 85],
+  },
 };
 
 export default nextConfig;

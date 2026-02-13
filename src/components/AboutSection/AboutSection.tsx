@@ -19,7 +19,8 @@ export default function AboutSection() {
                 src="/images/headshot.jpg"
                 alt="Dave Krugman portrait"
                 fill
-                sizes="(max-width: 968px) 350px, 40vw"
+                sizes="(max-width: 968px) 100vw, 50vw"
+                quality={85}
                 style={{ objectFit: 'cover', objectPosition: 'center 20%' }}
                 priority
               />
