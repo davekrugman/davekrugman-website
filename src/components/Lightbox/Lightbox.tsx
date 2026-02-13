@@ -130,7 +130,7 @@ export default function Lightbox({ images, projectTitle, children }: LightboxPro
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className={styles.lightboxImage}
-          src={images[activeIndex]}
+          src={`/_next/image?url=${encodeURIComponent(images[activeIndex])}&w=3840&q=80`}
           alt={`${projectTitle} — ${activeIndex + 1}`}
         />
         <button className={styles.close} onClick={close} aria-label="Close lightbox">
