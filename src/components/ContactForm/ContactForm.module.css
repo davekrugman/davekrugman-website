@@ -147,39 +147,32 @@
 .successMessage {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 1rem;
-  padding: 3rem 2rem;
-  border: 1px solid var(--border);
-  background: var(--bg);
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
 .successIcon {
-  font-size: 2rem;
+  font-size: 0.6rem;
+  font-family: var(--mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   color: var(--accent);
-  width: 3.5rem;
-  height: 3.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: 1px solid var(--accent);
-  border-radius: 50%;
+  padding: 0.5rem 1rem;
 }
 
 .successMessage h4 {
   font-family: var(--mono);
-  font-size: 1rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   color: var(--text);
 }
 
 .successMessage p {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-dim);
-  line-height: 1.6;
+  line-height: 1.8;
 }
 
 /* Error state */

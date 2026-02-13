@@ -68,9 +68,9 @@ export default function ContactForm() {
 
       {status === 'success' ? (
         <div className={styles.successMessage}>
-          <div className={styles.successIcon}>&#10003;</div>
-          <h4>Message sent.</h4>
-          <p>Thanks for reaching out. I&apos;ll get back to you soon.</p>
+          <div className={styles.successIcon}>Sent</div>
+          <h4>Thanks for reaching out.</h4>
+          <p>I&apos;ll get back to you soon.</p>
           <button
             className={styles.submitBtn}
             onClick={() => setStatus('idle')}
